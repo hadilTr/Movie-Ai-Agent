@@ -43,30 +43,6 @@ Built with cutting-edge technologies:
 
 ---
 
-## 🎥 Demo
-
-### Example Queries
-
-```
-🔍 "Find movie titled Inception"
-   → Uses: Cypher Query
-   → Returns: Movie details, director, cast
-
-🔍 "Show me movies about artificial intelligence"
-   → Uses: Vector Search
-   → Returns: Semantically similar movies
-
-🔍 "Who directed The Matrix?"
-   → Uses: Cypher Query
-   → Returns: Wachowski siblings
-
-🔍 "Find supernatural horror movies"
-   → Uses: Vector Search
-   → Returns: Thematically related films
-```
-
----
-
 ## 🚀 Setup Instructions
 
 ### Prerequisites
@@ -146,22 +122,6 @@ docker run --name neo4j \
 
 Verify Neo4j is running: [http://localhost:7474](http://localhost:7474)
 
-#### 6️⃣ Load Sample Data
-
-Populate the database with sample movies and generate embeddings:
-
-```bash
-python generate_embeddings.py
-```
-
-**Expected output:**
-```
-✓ Schema created
-✓ Movies loaded: 50
-✓ People loaded: 100
-✓ Embeddings generated
-✓ Vector index created
-```
 
 #### 7️⃣ Run the Backend Server
 
@@ -428,36 +388,9 @@ streamlit run frontend/app.py --server.port 8502
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! Here's how you can help:
-
-1. 🍴 Fork the repository
-2. 🌿 Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. 💾 Commit your changes (`git commit -m 'Add amazing feature'`)
-4. 📤 Push to the branch (`git push origin feature/amazing-feature`)
-5. 🔀 Open a Pull Request
-
-### Ideas for Contributions
-
-- 🎨 Improve UI/UX design
-- 📊 Add more evaluation metrics
-- 🧪 Write unit tests
-- 📚 Expand documentation
-- 🐛 Fix bugs
-- ✨ Add new features
-
----
-
-## 📝 License
-
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
-
----
-
 ## 🙏 Acknowledgments
 
-Built with amazing open-source technologies:
+Built with open-source technologies:
 
 - [**LangGraph**](https://github.com/langchain-ai/langgraph) - Agent framework with ReAct pattern
 - [**Groq**](https://groq.com/) - Lightning-fast LLM inference
@@ -479,9 +412,5 @@ Built with amazing open-source technologies:
 <div align="center">
 
 **⭐ Star this repo if you find it useful!**
-
-**Built with ❤️ using LangGraph, Neo4j, and Groq**
-
-[Report Bug](https://github.com/hadilTr/Movie-Ai-Agent/issues) • [Request Feature](https://github.com/hadilTr/Movie-Ai-Agent/issues)
 
 </div>
