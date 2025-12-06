@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+neo4j
+langchain
+pandas
+numpy
+python-dotenv
+groq
+transformers
+torch
+langgraph
+langchain-groq
