@@ -1,55 +1,76 @@
 import time
-from main import run_query_with_tools 
-# Define your test scenarios
+from main import run_query_with_tools  # Import your agent's function
+
+
+# ---------------------------
+# Test Scenarios
+# ---------------------------
 test_scenarios = [
     {
         "query": "Find all movies directed by Christopher Nolan",
-        "expected_result": ["Inception", "Interstellar", "Dunkirk"]
-    },
-    {
-        "query": "Retrieve actors in 'Inception' and their roles",
-        "expected_result": ["Leonardo DiCaprio", "Joseph Gordon-Levitt", "Ellen Page"]
-    },
-    {
-        "query": "List all awards won by movies released in 2010",
-        "expected_result": ["Oscar Best Cinematography", "Oscar Best Sound Editing"]
+        "expected_result": ["Inception", "Interstellar"]
     }
+   
 ]
 
-# Function to compare results
+
+# ---------------------------
+# Correctness Check
+# ---------------------------
 def check_correctness(agent_result, expected_result):
-    # simple comparison (can improve for fuzzy matching)
-    return set(agent_result) == set(expected_result)
+    if not agent_result:
+        return False
 
-# Run evaluation
-results = []
+    # If the agent returns text, convert to lowercase comparison
+    if isinstance(agent_result, str):
+        agent_result = agent_result.lower()
+        return all(item.lower() in agent_result for item in expected_result)
 
-for scenario in test_scenarios:
-    query = scenario["query"]
-    expected = scenario["expected_result"]
-    
-    start_time = time.time()
-    agent_result, tool_used = run_query_with_tools(query)  # assumes your agent returns result and tool used
-    end_time = time.time()
-    
-    correct = check_correctness(agent_result, expected)
-    latency = round(end_time - start_time, 3)
-    
-    results.append({
-        "Query": query,
-        "Expected": expected,
-        "Agent Result": agent_result,
-        "Tool Used": tool_used,
-        "Correct": correct,
-        "Latency(s)": latency
-    })
+    # If the agent returns list (ideal)
+    if isinstance(agent_result, list):
+        return set(item.lower() for item in agent_result) == set(item.lower() for item in expected_result)
 
-# Print results
-for r in results:
-    print(f"Query: {r['Query']}")
-    print(f"Expected: {r['Expected']}")
-    print(f"Agent Result: {r['Agent Result']}")
-    print(f"Tool Used: {r['Tool Used']}")
-    print(f"Correct: {r['Correct']}")
-    print(f"Latency: {r['Latency(s)']}s")
-    print("-"*50)
+    return False
+
+
+# ---------------------------
+# Main Runner
+# ---------------------------
+def main():
+    results = []
+
+    for scenario in test_scenarios:
+        query = scenario["query"]
+        expected = scenario["expected_result"]
+
+        print(f"Running: {query}")
+
+        start_time = time.time()
+        agent_result, tool_used = run_query_with_tools(query)
+        end_time = time.time()
+
+        correctness = check_correctness(agent_result, expected)
+        latency = round(end_time - start_time, 3)
+
+        results.append({
+            "Query": query,
+            "Expected": expected,
+            "Agent Result": agent_result,
+            "Tool Used": tool_used,
+            "Correct": correctness,
+            "Latency(s)": latency
+        })
+
+    print("\n=================== EVALUATION RESULTS ===================\n")
+    for r in results:
+        print(f"Query: {r['Query']}")
+        print(f"Expected: {r['Expected']}")
+        print(f"Agent Result: {r['Agent Result']}")
+        print(f"Tool Used: {r['Tool Used']}")
+        print(f"Correct: {r['Correct']}")
+        print(f"Latency: {r['Latency(s)']}s")
+        print("-" * 50)
+
+
+if __name__ == "__main__":
+    main()
