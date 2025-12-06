@@ -215,8 +215,8 @@ print(f"Tools used: {[tool['tool_name'] for tool in tools_used]}")
 │          REST API Layer         │
 └───┬─────────────────────────┬───┘
     │                         │
-    │ POST /ask              │ GET /graph-info
-    │ (User Query)           │ (Schema Info)
+    │ POST /ask               │ GET /graph-info
+    │ (User Query)            │ (Schema Info)
     │                         │
     ▼                         ▼
 ┌─────────────────┐      ┌──────────────┐
