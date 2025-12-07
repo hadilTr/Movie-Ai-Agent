@@ -264,30 +264,36 @@ Final Answer — Format and respond in natural language
 ## 📂 Project Structure
 
 ```
-Movie-Ai-Agent/
+Movie-AI-Agent/
 │
-├── 📄 main.py                    # LangGraph agent orchestration
-├── 📄 api.py                     # FastAPI REST endpoints
-├── 📄 evaluate.py                # Performance evaluation script
-├── 📄 generate_embeddings.py     # Database setup & embeddings
-├── 📄 requirements.txt           # Python dependencies
-├── 📄 .env.example              # Environment variables template
-├── 📄 README.md                 # This file
+├── 📁 __pycache__/
+├── 📁 .venv/
 │
-├── 📁 tools/
-│   ├── graph_query_tool.py      # Cypher query executor
-│   └── search_tool.py           # Vector similarity search
+├── 📁 backend/
+│   └── api.py
+│
+├── 📁 data/
+│   ├── movies.csv
+│   ├── persons.csv
+│   └── roles.csv
 │
 ├── 📁 frontend/
-│   └── app.py                   # Streamlit UI
+│   └── app.py
 │
-└── 📁 backend/
-    └── data/
-        ├── movies.csv           # Sample movie data
-        ├── persons.csv          # Sample person data
-        └── roles.csv            # Relationship data
-```
-
+├── 📁 tools/
+│   ├── __pycache__/
+│   ├── __init__.py
+│   ├── graph_query_tool.py
+│   └── search_tool.py
+│
+├── .env
+├── .gitignore
+├── generate_embeddings.py
+├── main.py
+├── react_agent_graph.png
+├── README.md
+├── requirements.txt
+└── system_evaluation.py
 ---
 
 ## 🔧 Configuration
