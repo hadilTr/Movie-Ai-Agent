@@ -210,21 +210,24 @@ print(f"Tools used: {[tool['tool_name'] for tool in tools_used]}")
 └────────┬────────┘
          │ HTTP/REST
          ▼
-┌─────────────────┐
-│   FastAPI       │  REST API Layer
-│   (Backend)     │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│   LangGraph     │  Agent Orchestration
-│   ReAct Agent   │  (Reasoning + Acting)
-└────────┬────────┘
-         │
+┌─────────────────────────────────┐
+│         FastAPI Backend         │
+│          REST API Layer         │
+└───┬─────────────────────────┬───┘
+    │                         │
+    │ POST /ask               │ GET /graph-info
+    │ (User Query)            │ (Schema Info)
+    │                         │
+    ▼                         ▼
+┌─────────────────┐      ┌──────────────┐
+│   LangGraph     │      │    Neo4j     │◄─── Direct Access
+│   ReAct Agent   │      │  Graph DB    │
+└────────┬────────┘      │              │
+         │               └──────────────┘
     ┌────┴────────────────┐
     ▼                     ▼
 ┌──────────┐      ┌──────────────┐
-│   Groq   │      │    Neo4j     │
+│   Groq   │      │    Neo4j     │◄─── Agent Access
 │   LLM    │      │  Graph DB +  │
 │          │      │ Vector Index │
 └──────────┘      └──────────────┘
@@ -233,17 +236,18 @@ print(f"Tools used: {[tool['tool_name'] for tool in tools_used]}")
 ### ReAct Agent Flow
 
 ```
-1. User Query
-   ↓
-2. Agent (LLM) → Analyzes query
-   ↓
-3. Tool Selection → Decides: Cypher or Vector Search?
-   ↓
-4. Tool Execution → Query Neo4j
-   ↓
-5. Result Processing → Format results
-   ↓
-6. Response → Natural language answer
+User Query
+↓
+ReAct Agent (LLM) — Think
+↓
+Tool Selection — Decide: Cypher or Vector Search?
+↓
+Act — Call chosen tool
+↓
+Observe — Get tool result
+↺ (loops Think → Decide → Act → Observe as needed)
+↓
+Final Answer — Format and respond in natural language
 ```
 
 ### Dual Retrieval Strategy
