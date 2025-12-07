@@ -340,7 +340,6 @@ python evaluate.py
 - Tool selection accuracy
 - Query correctness
 - Response time
-- Error handling
 
 ---
 
