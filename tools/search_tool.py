@@ -42,16 +42,7 @@ class SearchTool:
 
 @tool
 def vector_search(text_query: str, top_k: int = 5) -> str:
-    """
-    Perform a semantic vector search on movie plots in Neo4j.
     
-    Args:
-        text_query: The search query describing themes, plot, or concepts
-        top_k: Number of results to return (default: 5)
-        
-    Returns:
-        Matching movies as a JSON-formatted string with title, year, and similarity score
-    """
     try:
         # Initialize search tool
         search_tool = SearchTool()
@@ -77,7 +68,6 @@ def vector_search(text_query: str, top_k: int = 5) -> str:
         if not data:
             return "No matching movies found for this search."
         
-        # Convert to JSON string
         return json.dumps(data, indent=2)
 
     except Exception as e:

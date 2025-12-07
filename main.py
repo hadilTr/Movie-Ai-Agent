@@ -11,18 +11,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# ---------------------------
-# LLM setup
-# ---------------------------
+
 llm = ChatGroq(
     api_key=os.getenv("groq_api_key"),
     model="llama-3.3-70b-versatile",
     temperature=0
 )
 
-# ---------------------------
-# System prompt (IMPROVED)
-# ---------------------------
+
 system_prompt = """You are a movie database assistant with access to a Neo4j graph database.
 
 DATABASE SCHEMA:
@@ -53,46 +49,30 @@ RESPONSE RULES:
 
 """
 
-# ---------------------------
-# Tool setup (BIND TOOLS - THIS WAS MISSING!)
-# ---------------------------
-tools = [graph_query, vector_search]
-llm_with_tools = llm.bind_tools(tools)  # ← YOU NEED THIS!
 
-# ---------------------------
-# Agent state definition
-# ---------------------------
+tools = [graph_query, vector_search]
+llm_with_tools = llm.bind_tools(tools)  
+
+
 class AgentState(TypedDict):
     messages: Annotated[Sequence[BaseMessage], operator.add]
 
-# ---------------------------
-# Agent node (IMPROVED)
-# ---------------------------
+
 def agent_node(state: AgentState):
     messages = state["messages"]
-    
-    # Always include system prompt for context
     messages_with_system = [SystemMessage(content=system_prompt)] + messages
-    
-    # Use llm_with_tools instead of plain llm
     response = llm_with_tools.invoke(messages_with_system)
     return {"messages": [response]}
 
-# ---------------------------
-# Tool node
-# ---------------------------
+
 tool_node = ToolNode(tools)
 
-# ---------------------------
-# Routing logic
-# ---------------------------
+
 def should_continue(state: AgentState):
     last_msg = state["messages"][-1]
     return "tools" if getattr(last_msg, "tool_calls", None) else END
 
-# ---------------------------
-# Build the graph workflow
-# ---------------------------
+# the graph workflow
 workflow = StateGraph(AgentState)
 workflow.add_node("agent", agent_node)
 workflow.add_node("tools", tool_node)
@@ -101,45 +81,46 @@ workflow.add_conditional_edges("agent", should_continue, {"tools": "tools", END:
 workflow.add_edge("tools", "agent")
 app = workflow.compile()
 
-# ---------------------------
-# Helper function to run queries
-# ---------------------------
+
+
+
 def run_query(query: str):
     """Run query and return final answer only"""
     initial_state = {"messages": [HumanMessage(content=query)]}
-    final_state = app.invoke(initial_state)
+    final_state = app.invoke(initial_state, config={"recursion_limit": 20})  
     final_msg = final_state["messages"][-1]
     return getattr(final_msg, "content", None)
 
 
 def run_query_with_tools(query: str):
-    """
-    Run query and return both answer and tools used
     
-    Returns:
-        tuple: (answer: str, tools_used: list)
-    """
     initial_state = {"messages": [HumanMessage(content=query)]}
     
-    # Track all tool calls
+    
     tools_used = []
     
-    # Stream to capture tool calls
-    for output in app.stream(initial_state):
+    for output in app.stream(initial_state, config={"recursion_limit": 20}):
         for node_name, node_output in output.items():
             if "messages" in node_output:
                 last_msg = node_output["messages"][-1]
                 tool_calls = getattr(last_msg, "tool_calls", None)
                 
                 if tool_calls:
-                    for tool_call in tool_calls:
-                        tools_used.append({
-                            "tool_name": tool_call.get("name"),
-                            "arguments": tool_call.get("args"),
-                            "id": tool_call.get("id")
-                        })
-    
-    # Get final answer
+                  for tool_call in tool_calls:
+                    match tool_call.get("name"):
+                        case "query":
+                            tools_used.append({
+                                "tool_name": "graph_query",
+                                "arguments": tool_call.get("args"),
+                                "id": tool_call.get("id")
+                            })
+                        case "vector_search":
+                            tools_used.append({
+                                "tool_name": "vector_search",
+                                "arguments": tool_call.get("args"),
+                                "id": tool_call.get("id")
+                })
+                            
     final_state = app.invoke(initial_state)
     final_msg = final_state["messages"][-1]
     answer = getattr(final_msg, "content", None)
@@ -172,3 +153,22 @@ def run_query_debug(query: str):
     final_msg = final_state["messages"][-1]
     return getattr(final_msg, "content", None)
 
+if __name__ == "__main__":
+
+    """Generate and save graph visualization"""
+    # try:
+    #     img = app.get_graph().draw_mermaid_png()
+    #     with open("react_agent_graph.png", "wb") as f:
+    #         f.write(img)
+    # except Exception as e:
+    #     print(f"Could not generate graph visualization: {e}")
+
+    """Example query run and tool usage printout"""
+    queries = ["List all movies directed by Christopher Nolan"," Give me a film about dream invasion"]
+    for query in queries:
+        answer, tools_used = run_query_with_tools(query)
+        print("=== QUERY ===")
+        print(f"Query: {query}\n")
+        print(f"Answer: {answer}\n")
+        print(f"Tools Used: {tools_used}\n")
+    

@@ -16,7 +16,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Enable CORS for Streamlit
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -25,7 +24,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ======== MODELS =========
 class AskRequest(BaseModel):
     query: str
 
@@ -38,7 +36,6 @@ class GraphInfoResponse(BaseModel):
     property_keys: list
 
 
-# ======== ENDPOINTS =========
 
 @app.get("/")
 async def root():
@@ -54,7 +51,7 @@ async def ask_endpoint(payload: AskRequest):
     and returns the final response.
     """
     try:
-        # Run your agent (run_query only returns answer string)
+        
         answer = run_query(payload.query)
         
         return AskResponse(answer=answer)
@@ -83,6 +80,5 @@ async def graph_info():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# === RUN SERVER ===
 if __name__ == "__main__":
     uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)

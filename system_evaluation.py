@@ -1,41 +1,41 @@
 import time
-from main import run_query_with_tools  # Import your agent's function
+from main import run_query_with_tools  
 
 
-# ---------------------------
-# Test Scenarios
-# ---------------------------
 test_scenarios = [
     {
         "query": "Find all movies directed by Christopher Nolan",
         "expected_result": ["Inception", "Interstellar"]
+    },
+
+    {
+        "query": "Which movies talks about dream invasion?",
+        "expected_result": ["Inception"]
+    },
+
+    {
+        "query": " Movies centered on cybercrime, hacking, or technology",
+        "expected_result": ["The Matrix"]
     }
    
 ]
 
 
-# ---------------------------
-# Correctness Check
-# ---------------------------
 def check_correctness(agent_result, expected_result):
     if not agent_result:
         return False
 
-    # If the agent returns text, convert to lowercase comparison
     if isinstance(agent_result, str):
         agent_result = agent_result.lower()
         return all(item.lower() in agent_result for item in expected_result)
 
-    # If the agent returns list (ideal)
     if isinstance(agent_result, list):
         return set(item.lower() for item in agent_result) == set(item.lower() for item in expected_result)
 
     return False
 
 
-# ---------------------------
-# Main Runner
-# ---------------------------
+
 def main():
     results = []
 

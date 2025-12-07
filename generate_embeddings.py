@@ -4,7 +4,6 @@ from transformers import AutoModel, AutoTokenizer
 from neo4j import GraphDatabase
 import torch
 
-# Load environment variables
 load_dotenv()
 
 class Neo4jEmbedder:

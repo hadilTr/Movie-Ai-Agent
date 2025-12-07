@@ -9,15 +9,7 @@ load_dotenv()
 
 @tool
 def query(cypher_query: str) -> str:
-    """
-    Execute a Cypher query on the Neo4j database.
-    
-    Args:
-        cypher_query: A valid Cypher query string to execute
-        
-    Returns:
-        Query results as a JSON-formatted string
-    """
+   
     if not cypher_query:
         return json.dumps({"error": "No Cypher query provided."})
 
@@ -33,11 +25,9 @@ def query(cypher_query: str) -> str:
         
         driver.close()
         
-        # Return empty list message if no results
         if not data:
             return "No results found for this query."
         
-        # Convert to JSON string
         return json.dumps(data, indent=2)
 
     except Exception as e:

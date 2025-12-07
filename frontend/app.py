@@ -24,11 +24,9 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Title
 st.title("🎬 Movie AI Agent")
 st.markdown("Ask questions about movies using natural language!")
 
-# Sidebar
 with st.sidebar:
     st.header("⚙️ Settings")
     
@@ -77,7 +75,6 @@ if "query" not in st.session_state:
 if "history" not in st.session_state:
     st.session_state.history = []
 
-# Main content
 col1, col2 = st.columns([3, 1])
 
 with col1:
@@ -92,13 +89,11 @@ with col2:
     st.markdown("<br>", unsafe_allow_html=True)  # Spacing
     submit = st.button("🔍 Search", type="primary", use_container_width=True)
 
-# Process query
 if submit and query:
     st.session_state.query = query
     
     with st.spinner("🤖 AI Agent is thinking..."):
         try:
-            # Call FastAPI endpoint
             response = requests.post(
                 f"{API_URL}/ask",
                 json={"query": query},
@@ -115,7 +110,6 @@ if submit and query:
                     "answer": answer
                 })
                 
-                # Display answer
                 st.markdown("---")
                 st.subheader("💡 Answer")
                 st.markdown(answer)
@@ -131,7 +125,6 @@ if submit and query:
         except Exception as e:
             st.error(f"❌ Error: {str(e)}")
 
-# Show history
 if st.session_state.history:
     st.markdown("---")
     st.subheader("📜 Query History")
@@ -141,13 +134,11 @@ if st.session_state.history:
             st.markdown(f"**Question:** {item['query']}")
             st.markdown(f"**Answer:** {item['answer']}")
 
-# Clear history button
 if st.session_state.history:
     if st.button("🗑️ Clear History"):
         st.session_state.history = []
         st.rerun()
 
-# Footer
 st.markdown("---")
 st.markdown(
     """
